@@ -44,28 +44,30 @@ const Cart = (props) => {
 
   const items = CartItems.map(x => {
 
-    total += x.ItemsCount * x.price;
+    total += x.ItemsCount * (x.price || 0);
     itemsCount += x.ItemsCount;
 
     return (
       <div key={x.Íd} className="d-flex justify-content-between align-items-center mt-3 p-2 items rounded">
         <div className="d-flex">
-          <img className="rounded" src={x.Image} width="40" />
+          <span><img width="30" src="https://img.icons8.com/officel/48/000000/paypal.png" /></span>
+          {/* <img className="rounded" src={x.Image} width="40" /> */}
           <div className="ml-2"><span className="font-weight-bold d-block">{x.description}
           </span><span className="spec">{x.price}</span>
           </div>
         </div>
         <div className="d-flex align-items-center">
-          <i class="bi bi-dash-circle" onClick={() => removeItem(x)}></i>
-          <span className="d-block ml-5 font-weight-bold">{x.coint}{x.price}</span>
-          <i class="bi bi-plus-circle" onClick={() => addItem(x)}></i>
-        </div>
-        <div className="d-flex align-items-center">
-          <span className="d-block">{x.ItemsCount}</span>
+          <span className="d-block ml-5 font-weight-bold">RD${x.price || "000.0"}</span>
 
         </div>
         <div className="d-flex align-items-center">
-          <span className="d-block ml-5 font-weight-bold">{x.coint}{x.ItemsCount * x.price}</span>
+          <i className="bi bi-dash-circle" onClick={() => digreseItem(x)}></i>
+
+          <span className="d-block">{x.ItemsCount}</span>
+          <i className="bi bi-plus-circle" onClick={() => addItem(x)}></i>
+        </div>
+        <div className="d-flex align-items-center">
+          <span className="d-block ml-5 font-weight-bold">RD${x.ItemsCount * (x.price || 0)}</span>
           <i className="bi bi-trash3" onClick={() => removeItem(x)}></i></div>
       </div>
     )
@@ -93,15 +95,17 @@ const Cart = (props) => {
           <div className="row no-gutters">
             <div className="col-md-12 ">
               <div className="product-details mr-2">
-                <div className="d-flex flex-row align-items-center">
+                {/* <div className="d-flex flex-row align-items-center">
                   <i className="fa fa-long-arrow-left"></i>
-                  <span className="ml-2">Seguir comprando</span></div>
-                <hr />
+                  <span className="ml-2">Seguir comprando</span>
+                </div> 
+                <hr />*/}
                 <h6 className="mb-0">Canasta</h6>
-                <div class="d-flex justify-content-between"><span>Tienes {items.length} productos en tu canasta</span>
-                  <div class="d-flex flex-row align-items-center"><span class="text-black-50">Sort by:</span>
+                <div className="d-flex justify-content-between"><span>Tienes {items.length} productos en tu canasta</span>
+                  <div className="d-flex flex-row align-items-center">
+                    {/* <span className="text-black-50">Sort by:</span> */}
 
-                    <div class="price ml-2"><span class="mr-1">price</span><i class="fa fa-angle-down"></i></div>
+                    <div className="price ml-2"><span className="mr-1">price</span><i className="fa fa-angle-down"></i></div>
                   </div>
                 </div>
 
@@ -160,10 +164,8 @@ const Cart = (props) => {
         </div>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={props.handleClose}>
-          Close
-        </Button>
-        <Button variant="primary">Understood</Button>
+        <Button variant="secondary" onClick={props.handleClose}>Cerrar</Button>
+        <Button variant="primary">Pagar</Button>
       </Modal.Footer>
     </Modal>
   );

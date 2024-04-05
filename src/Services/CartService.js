@@ -30,7 +30,7 @@ export const AddItemToCar = (item) => {
 
 
     const index = CartItems.findIndex(x => {
-        return x.id == item.id
+        return x._id == item._id
     });
 
     if (index == -1) {
@@ -52,24 +52,26 @@ export const RemoveItemToCart = (item) => {
 
 
     const index = CartItems.findIndex(x => {
-        return x.id == item.id
+        return x._id == item._id
     });
 
-    CartItems[index]["ItemsCount"] -= 1;
+    CartItems[index]["ItemsCount"] = 0;
 
     if (CartItems[index].ItemsCount == 0)
         CartItems.splice(index, 1);
 
-    console.log(CartItems)
+
     localStorage.setItem("CartItems", JSON.stringify(CartItems));
     //return GetItemsonCart();
 }
+
+
 
 export const DigreseItemToCart = (item) => {
 
 
     const index = CartItems.findIndex(x => {
-        return x.id == item.id
+        return x._id == item._id
     });
 
     CartItems[index]["ItemsCount"] -= 1;
@@ -77,7 +79,7 @@ export const DigreseItemToCart = (item) => {
     if (CartItems[index].ItemsCount == 0)
         CartItems.splice(index, 1);
 
-    console.log(CartItems)
+
     localStorage.setItem("CartItems", JSON.stringify(CartItems));
     //return GetItemsonCart();
 }
