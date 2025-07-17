@@ -1,11 +1,32 @@
 
-//import logo from './logo.svg';
-//import './styles.css';
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
+import {
+  Container,
+  Grid,
+  Card,
+  CardMedia,
+  CardContent,
+  CardActions,
+  Typography,
+  Button,
+  Box,
+  IconButton,
+  Chip,
+  TextField,
+  Paper
+} from '@mui/material';
+import {
+  AddShoppingCart as AddShoppingCartIcon,
+  ArrowBackIos as ArrowBackIcon,
+  ArrowForwardIos as ArrowForwardIcon,
+  Phone as PhoneIcon,
+  Email as EmailIcon,
+  LocationOn as LocationIcon
+} from '@mui/icons-material';
 import Header from '../Header/';
 import ItemPopup from '../ItemPopup';
-import * as  DaoService from "./../../Services/DaoService"
-import * as  CartService from "./../../Services/CartService"
+import * as DaoService from "./../../Services/DaoService"
+import * as CartService from "./../../Services/CartService"
 
 const Home = () => {
 
@@ -81,125 +102,278 @@ const Home = () => {
   }
 
   const SectionMap = Sections?.map(element => {
-
     const products = element.products?.map(x => {
       return (
-        <div className="col-6 col-xs-6 col-sm-6 col-md-4 col-lg-3" key={x.id} onClick={() => ViewItem(x)}>
-          <div className="card h-100">
-            {/* <img className="card-img-top" src={x.Image} alt="..." /> */}
-            <img className="card-img-top" src="https://dummyimage.com/450x300/dee2e6/6c757d.jpg"
-              alt="..." />
-            <div className="card-body p-4" >
-              <div className="text-center">
-                <h5 className="fw-bolder">{x.description}</h5>
-                <br></br>
-                <p> RD$ {x.price || 0}</p>
-
-              </div>
-            </div>
-            <div className="card-footer p-4 pt-0 border-top-0 bg-transparent">
-              <div className="text-center">
-                <a className="btn btn-outline-dark mt-auto" id={x.id} href="#" onClick={event => addToCar(event, x)}>Add to cart</a>
-              </div>
-            </div>
-          </div>
-
-        </div>
-      )
-    })
-
+        <Grid item xs={12} sm={6} md={4} lg={3} key={x.id}>
+          <Card 
+            sx={{ 
+              height: '100%',
+              display: 'flex',
+              flexDirection: 'column',
+              cursor: 'pointer',
+              transition: 'transform 0.2s',
+              '&:hover': {
+                transform: 'scale(1.02)',
+              }
+            }}
+            onClick={() => ViewItem(x)}
+          >
+            <CardMedia
+              component="img"
+              height="240"
+              image="https://dummyimage.com/450x300/dee2e6/6c757d.jpg"
+              alt={x.description}
+              sx={{ objectFit: 'cover' }}
+            />
+            <CardContent sx={{ flexGrow: 1, p: 2 }}>
+              <Typography 
+                variant="h6" 
+                component="h3" 
+                gutterBottom
+                sx={{ 
+                  fontWeight: 600,
+                  fontSize: '1.1rem',
+                  lineHeight: 1.3
+                }}
+              >
+                {x.description}
+              </Typography>
+              <Typography 
+                variant="h6" 
+                color="primary"
+                sx={{ 
+                  fontWeight: 700,
+                  mt: 1
+                }}
+              >
+                RD$ {x.price || 0}
+              </Typography>
+            </CardContent>
+            <CardActions sx={{ p: 2, pt: 0 }}>
+              <Button
+                variant="outlined"
+                color="primary"
+                fullWidth
+                startIcon={<AddShoppingCartIcon />}
+                onClick={(event) => addToCar(event, x)}
+                sx={{ fontWeight: 600 }}
+              >
+                Agregar al carrito
+              </Button>
+            </CardActions>
+          </Card>
+        </Grid>
+      );
+    });
 
     return (
-      <section key={element.id} id={element.description} >
-        <div className="container">
-          <h3 className="text-left container px-4 px-lg-5 gx-lg-5">{element.description}</h3>
+      <Box key={element.id} id={element.description} sx={{ py: 4 }}>
+        <Container maxWidth="lg">
+          <Typography 
+            variant="h4" 
+            component="h2" 
+            gutterBottom
+            sx={{ 
+              fontWeight: 700,
+              mb: 3,
+              color: 'primary.main'
+            }}
+          >
+            {element.description}
+          </Typography>
 
-          <div className="container px-4 px-lg-5 mt-5 items-container">
-            <div id={element.id + "section"} className="row gx-4 gx-lg-5 row-cols-1 row-cols-md-3 row-cols-xl-4  scrolling-wrapper row flex-row flex-nowrap mt-1 pt-2">
+          <Box sx={{ position: 'relative' }}>
+            <Grid 
+              container 
+              spacing={3}
+              id={element.id + "section"}
+              sx={{
+                overflowX: 'auto',
+                flexWrap: 'nowrap',
+                pb: 2,
+                '&::-webkit-scrollbar': {
+                  height: 8,
+                },
+                '&::-webkit-scrollbar-track': {
+                  backgroundColor: 'grey.100',
+                  borderRadius: 4,
+                },
+                '&::-webkit-scrollbar-thumb': {
+                  backgroundColor: 'grey.400',
+                  borderRadius: 4,
+                },
+              }}
+            >
               {products}
-            </div>
-          </div>
-          <div className="paddlenav paddlenav-framed paddlenav-compact buttos-container">
-            <button type="button" disabled="" onClick={() => handleClickL(element.id + "section")} aria-hidden="true" className="scroll-button paddlenav-arrow-previous">
-              <a href="#" className="arrow_icon">
-                <i className="bi bi-arrow-left"></i>
-              </a>
-            </button>
-            <button type="button" aria-hidden="false" onClick={() => handleClickR(element.id + "section")} className="scroll-button paddlenav-arrow-next">
-              <a href="#" className="arrow_icon">
-                <i className="bi bi-arrow-right"></i>
-              </a>
-            </button>
-          </div>
-        </div>
-      </section>
-    )
+            </Grid>
 
-
-  })
+            {/* Navigation Buttons */}
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'center',
+                gap: 2,
+                mt: 2
+              }}
+            >
+              <IconButton
+                onClick={() => handleClickL(element.id + "section")}
+                sx={{
+                  backgroundColor: 'primary.main',
+                  color: 'white',
+                  '&:hover': {
+                    backgroundColor: 'primary.dark',
+                  }
+                }}
+              >
+                <ArrowBackIcon />
+              </IconButton>
+              <IconButton
+                onClick={() => handleClickR(element.id + "section")}
+                sx={{
+                  backgroundColor: 'primary.main',
+                  color: 'white',
+                  '&:hover': {
+                    backgroundColor: 'primary.dark',
+                  }
+                }}
+              >
+                <ArrowForwardIcon />
+              </IconButton>
+            </Box>
+          </Box>
+        </Container>
+      </Box>
+    );
+  });
 
   return (
-
     <>
-      <ItemPopup showItem={show} selectItem={selectItem} handleClose={handleClose}></ItemPopup>
-      <Header handleCounChange={handleCounChange} Sections={Sections} itemsCount={itemsCount}></Header>
+      <ItemPopup showItem={show} selectItem={selectItem} handleClose={handleClose} />
+      <Header handleCounChange={handleCounChange} Sections={Sections} itemsCount={itemsCount} />
 
       {SectionMap}
 
+      {/* About Section */}
+      <Box sx={{ py: 6, backgroundColor: 'background.paper' }}>
+        <Container maxWidth="lg">
+          <Paper elevation={2} sx={{ p: 4, textAlign: 'center' }}>
+            <Typography variant="h4" component="h2" gutterBottom sx={{ fontWeight: 700, color: 'primary.main' }}>
+              NOSOTROS
+            </Typography>
+            <Typography variant="h6" sx={{ fontStyle: 'italic', mb: 3, color: 'text.secondary' }}>
+              ¡Especialistas en armamento!
+            </Typography>
+            <Typography variant="body1" sx={{ lineHeight: 1.8, color: 'text.primary' }}>
+              Somos una empresa familiar reconocida por su trayectoria y seriedad, líder en el mercado.
+              <br /><br />
+              Atendemos a clientes de todo el país, quienes adquieren nuestros productos a distancia o nos visitan en nuestros locales.
+              <br /><br />
+              Ofrecemos la mejor opción de compra del mercado, basándonos en los siguientes principios:
+              <br />
+              • El mejor precio
+              <br />
+              • La más rápida y eficiente atención personalizada
+              <br />
+              • Garantía total de satisfacción
+            </Typography>
+          </Paper>
+        </Container>
+      </Box>
 
-      <div id="Nosotros" className="container text-center">
-        <h3>NOSOTROS</h3>
-        <p><em>We love music!</em></p>
-        <p>Somos una empresa familiar reconocida por su trayectoria y seriedad, líder en el mercado.
+      {/* Contact Section */}
+      <Box id="Contactos" sx={{ py: 6, backgroundColor: 'grey.50' }}>
+        <Container maxWidth="lg">
+          <Typography 
+            variant="h4" 
+            component="h2" 
+            align="center" 
+            gutterBottom
+            sx={{ fontWeight: 700, color: 'primary.main', mb: 2 }}
+          >
+            Contacto
+          </Typography>
+          <Typography 
+            variant="h6" 
+            align="center" 
+            sx={{ fontStyle: 'italic', mb: 4, color: 'text.secondary' }}
+          >
+            ¡Nos encanta atender a nuestros clientes!
+          </Typography>
 
-          <br />Atendemos a clientes de todo el país, quienes adquieren nuestros productos a distancia o nos visitan a nuestros locales nos respaldan.
-          <br />Ofrecer la mejor opción de compra del mercado, basándonos en los siguientes principios:
-          El mejor precio.La más rápida y eficiente atención personalizada.Garantía total de satisfacción.</p>
-        <br />
+          <Grid container spacing={4}>
+            <Grid item xs={12} md={4}>
+              <Paper elevation={2} sx={{ p: 3, height: '100%' }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                  <LocationIcon sx={{ mr: 2, color: 'primary.main' }} />
+                  <Typography variant="body1">Santo Domingo, RD</Typography>
+                </Box>
+                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                  <PhoneIcon sx={{ mr: 2, color: 'primary.main' }} />
+                  <Typography variant="body1">+00 1515151515</Typography>
+                </Box>
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  <EmailIcon sx={{ mr: 2, color: 'primary.main' }} />
+                  <Typography variant="body1">mail@mail.com</Typography>
+                </Box>
+              </Paper>
+            </Grid>
+            <Grid item xs={12} md={8}>
+              <Paper elevation={2} sx={{ p: 3 }}>
+                <Grid container spacing={2}>
+                  <Grid item xs={12} sm={6}>
+                    <TextField
+                      fullWidth
+                      label="Nombre"
+                      variant="outlined"
+                      required
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <TextField
+                      fullWidth
+                      label="Email"
+                      type="email"
+                      variant="outlined"
+                      required
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <TextField
+                      fullWidth
+                      label="Comentario"
+                      multiline
+                      rows={4}
+                      variant="outlined"
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                      <Button 
+                        variant="contained" 
+                        color="primary"
+                        size="large"
+                        sx={{ fontWeight: 600, px: 4 }}
+                      >
+                        Enviar
+                      </Button>
+                    </Box>
+                  </Grid>
+                </Grid>
+              </Paper>
+            </Grid>
+          </Grid>
+        </Container>
+      </Box>
 
-      </div>
-
-
-      <div id="Contactos" className="container contact-container">
-        <h3 className="text-center" >Contact</h3>
-        <p className="text-center"><em>We love our fans!</em></p>
-
-        <div className="row">
-          <div className="col-md-4">
-
-            <p><span className="glyphicon glyphicon-map-marker"></span>Santo Domingo, RD</p>
-            <p><span className="glyphicon glyphicon-phone"></span>Phone: +00 1515151515</p>
-            <p><span className="glyphicon glyphicon-envelope"></span>Email: mail@mail.com</p>
-          </div>
-          <div className="col-md-8">
-            <div className="row">
-              <div className="col-sm-6 form-group">
-                <input className="form-control" id="name" name="Nombre" placeholder="Nombre" type="text" required />
-              </div>
-              <div className="col-sm-6 form-group">
-                <input className="form-control" id="email" name="Email" placeholder="Email" type="email" required />
-              </div>
-            </div>
-            <br />
-            <textarea className="form-control" id="comments" name="comments" placeholder="Comentario" rows="5"></textarea>
-            <br />
-            <div className="row">
-              <div className="col-md-12 form-group botton-right ">
-                <button className="btn btn-dark pull-right" type="submit">Send</button>
-              </div>
-            </div>
-          </div>
-        </div>
-        <br />
-
-      </div>
-
-
-      <footer className="py-3 bg-white float-end ">
-        <div className="container px-4 px-lg-5 mt-5">
-          <p className="m-0 text-center ">Copyright &copy; Your Website 2023</p></div>
-      </footer>
-
+      {/* Footer */}
+      <Box sx={{ py: 3, backgroundColor: 'primary.main', color: 'white' }}>
+        <Container maxWidth="lg">
+          <Typography variant="body2" align="center">
+            Copyright © Armería Pro 2023
+          </Typography>
+        </Container>
+      </Box>
     </>
   );
 }

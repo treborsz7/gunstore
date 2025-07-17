@@ -1,9 +1,27 @@
 import React, { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
-import Button from 'react-bootstrap/Button';
-import Modal from 'react-bootstrap/Modal';
-import * as CartService from '../../Services/CartService'
-import './Cart.styles.css';
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  Typography,
+  Box,
+  Grid,
+  IconButton,
+  Avatar,
+  Divider,
+  Paper,
+  Chip,
+  Badge
+} from '@mui/material';
+import {
+  Remove as RemoveIcon,
+  Add as AddIcon,
+  Delete as DeleteIcon,
+  ShoppingCart as ShoppingCartIcon
+} from '@mui/icons-material';
+import * as CartService from '../../Services/CartService';
 
 const Cart = (props) => {
   const [show, setShow] = useState(false);
@@ -43,133 +61,155 @@ const Cart = (props) => {
   }
 
   const items = CartItems.map(x => {
-
     total += x.ItemsCount * (x.price || 0);
     itemsCount += x.ItemsCount;
 
     return (
-      <div key={x.Íd} className="d-flex justify-content-between align-items-center mt-3 p-2 items rounded">
-        <div className="d-flex">
-          <span><img width="30" src="https://img.icons8.com/officel/48/000000/paypal.png" /></span>
-          {/* <img className="rounded" src={x.Image} width="40" /> */}
-          <div className="ml-2"><span className="font-weight-bold d-block">{x.description}
-          </span><span className="spec">{x.price}</span>
-          </div>
-        </div>
-        <div className="d-flex align-items-center">
-          <span className="d-block ml-5 font-weight-bold">RD${x.price || "000.0"}</span>
-
-        </div>
-        <div className="d-flex align-items-center">
-          <i className="bi bi-dash-circle" onClick={() => digreseItem(x)}></i>
-
-          <span className="d-block">{x.ItemsCount}</span>
-          <i className="bi bi-plus-circle" onClick={() => addItem(x)}></i>
-        </div>
-        <div className="d-flex align-items-center">
-          <span className="d-block ml-5 font-weight-bold">RD${x.ItemsCount * (x.price || 0)}</span>
-          <i className="bi bi-trash3" onClick={() => removeItem(x)}></i></div>
-      </div>
-    )
-  })
+      <Paper key={x.Íd} elevation={1} sx={{ p: 2, mb: 2 }}>
+        <Grid container spacing={2} alignItems="center">
+          <Grid item xs={2}>
+            <Avatar
+              src="https://dummyimage.com/60x60/dee2e6/6c757d.jpg"
+              alt={x.description}
+              sx={{ width: 50, height: 50 }}
+            />
+          </Grid>
+          <Grid item xs={4}>
+            <Typography variant="subtitle1" fontWeight={600}>
+              {x.description}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              RD$ {x.price || "0.00"}
+            </Typography>
+          </Grid>
+          <Grid item xs={3}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <IconButton 
+                size="small" 
+                onClick={() => digreseItem(x)}
+                sx={{ 
+                  backgroundColor: 'grey.100',
+                  '&:hover': { backgroundColor: 'grey.200' }
+                }}
+              >
+                <RemoveIcon fontSize="small" />
+              </IconButton>
+              <Chip
+                label={x.ItemsCount}
+                size="small"
+                color="primary"
+                sx={{ minWidth: 40 }}
+              />
+              <IconButton 
+                size="small" 
+                onClick={() => addItem(x)}
+                sx={{ 
+                  backgroundColor: 'grey.100',
+                  '&:hover': { backgroundColor: 'grey.200' }
+                }}
+              >
+                <AddIcon fontSize="small" />
+              </IconButton>
+            </Box>
+          </Grid>
+          <Grid item xs={2}>
+            <Typography variant="subtitle1" fontWeight={600} color="primary">
+              RD$ {x.ItemsCount * (x.price || 0)}
+            </Typography>
+          </Grid>
+          <Grid item xs={1}>
+            <IconButton 
+              onClick={() => removeItem(x)}
+              color="error"
+              size="small"
+            >
+              <DeleteIcon />
+            </IconButton>
+          </Grid>
+        </Grid>
+      </Paper>
+    );
+  });
   //setTotalItemsCount(itemsCount)
   //props.itemsCount = itemsCount;
   handleCounChange(itemsCount);
 
   return (
-
-    <Modal
-      show={show}
-      onHide={props.handleClose}
-      backdrop="static"
-      size="xl"
-      fullscreen={false}
-      dialogClassName="modal-90w"
-      keyboard={false}
+    <Dialog
+      open={show}
+      onClose={props.handleClose}
+      maxWidth="md"
+      fullWidth
+      PaperProps={{
+        sx: { borderRadius: 2 }
+      }}
     >
-      <Modal.Header closeButton>
-        <Modal.Title>Carrito de compras</Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        <div className="container mt-5 p-3 rounded cart">
-          <div className="row no-gutters">
-            <div className="col-md-12 ">
-              <div className="product-details mr-2">
-                {/* <div className="d-flex flex-row align-items-center">
-                  <i className="fa fa-long-arrow-left"></i>
-                  <span className="ml-2">Seguir comprando</span>
-                </div> 
-                <hr />*/}
-                <h6 className="mb-0">Canasta</h6>
-                <div className="d-flex justify-content-between"><span>Tienes {items.length} productos en tu canasta</span>
-                  <div className="d-flex flex-row align-items-center">
-                    {/* <span className="text-black-50">Sort by:</span> */}
+      <DialogTitle sx={{ display: 'flex', alignItems: 'center', gap: 2, pb: 1 }}>
+        <ShoppingCartIcon color="primary" />
+        <Typography variant="h5" component="div" fontWeight={600}>
+          Carrito de compras
+        </Typography>
+      </DialogTitle>
+      
+      <DialogContent sx={{ px: 3 }}>
+        <Box sx={{ mb: 3 }}>
+          <Typography variant="h6" gutterBottom>
+            Tu canasta
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            Tienes {items.length} productos en tu canasta
+          </Typography>
+        </Box>
 
-                    <div className="price ml-2"><span className="mr-1">price</span><i className="fa fa-angle-down"></i></div>
-                  </div>
-                </div>
-
-                {items}
-
-                <div className="d-flex justify-content-between align-items-center mt-3 p-2 items rounded">
-                  <div className="d-flex">
-
-                  </div>
-                  <div className="d-flex align-items-center">
-
-                  </div>
-                  <div className="d-flex align-items-center">
-
-                  </div>
-                  <div className="d-flex align-items-center">
-                    <span className="d-block ml-5 font-weight-bold">RD${total}</span>
-                  </div>
-                </div>
-
-              </div>
-            </div>
-            {/* <div className="col-md-4">
-            <div className="payment-info">
-              <div className="d-flex justify-content-between align-items-center"><span>Card details</span>
-                <img className="rounded" src="https://i.imgur.com/WU501C8.jpg" width="30" />
-              </div><span className="type d-block mt-3 mb-1">Card type</span><label className="radio">
-                <input type="radio" name="card" value="payment" checked />
-                <span><img width="30" src="https://img.icons8.com/color/48/000000/mastercard.png" /></span> </label>
-
-              <label className="radio"> <input type="radio" name="card" value="payment" /> <span>
-                <img width="30" src="https://img.icons8.com/officel/48/000000/visa.png" /></span> </label>
-
-              <label className="radio">
-                <input type="radio" name="card" value="payment" />
-                <span><img width="30" src="https://img.icons8.com/ultraviolet/48/000000/amex.png" /></span>
-              </label>
-
-
-              <label className="radio">
-                <input type="radio" name="card" value="payment" />
-                <span><img width="30" src="https://img.icons8.com/officel/48/000000/paypal.png" /></span>
-              </label>
-              <div><label className="credit-card-label">Name on card</label><input type="text" className="form-control credit-inputs" placeholder="Name" /></div>
-              <div><label className="credit-card-label">Card number</label><input type="text" className="form-control credit-inputs" placeholder="0000 0000 0000 0000" /></div>
-              <div className="row">
-                <div className="col-md-6"><label className="credit-card-label">Date</label><input type="text" className="form-control credit-inputs" placeholder="12/24" /></div>
-                <div className="col-md-6"><label className="credit-card-label">CVV</label><input type="text" className="form-control credit-inputs" placeholder="342" /></div>
-              </div>
-              <hr className="line" />
-              <div className="d-flex justify-content-between information"><span>Subtotal</span><span>$3000.00</span></div>
-              <div className="d-flex justify-content-between information"><span>Shipping</span><span>$20.00</span></div>
-              <div className="d-flex justify-content-between information"><span>Total(Incl. taxes)</span><span>$3020.00</span></div><button className="btn btn-primary btn-block d-flex justify-content-between mt-3" type="button"><span>$3020.00</span><span>Checkout<i className="fa fa-long-arrow-right ml-1"></i></span></button></div>
-          </div> */}
-          </div>
-        </div>
-      </Modal.Body>
-      <Modal.Footer>
-        <Button variant="secondary" onClick={props.handleClose}>Cerrar</Button>
-        <Button variant="primary">Pagar</Button>
-      </Modal.Footer>
-    </Modal>
+        {items.length > 0 ? (
+          <>
+            {items}
+            
+            <Divider sx={{ my: 2 }} />
+            
+            <Paper elevation={2} sx={{ p: 2, backgroundColor: 'primary.main', color: 'white' }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Typography variant="h6" fontWeight={600}>
+                  Total:
+                </Typography>
+                <Typography variant="h5" fontWeight={700}>
+                  RD$ {total.toFixed(2)}
+                </Typography>
+              </Box>
+            </Paper>
+          </>
+        ) : (
+          <Box sx={{ textAlign: 'center', py: 4 }}>
+            <ShoppingCartIcon sx={{ fontSize: 64, color: 'grey.400', mb: 2 }} />
+            <Typography variant="h6" color="text.secondary">
+              Tu carrito está vacío
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Agrega algunos productos para comenzar
+            </Typography>
+          </Box>
+        )}
+      </DialogContent>
+      
+      <DialogActions sx={{ p: 3, pt: 1 }}>
+        <Button 
+          onClick={props.handleClose}
+          variant="outlined"
+          size="large"
+        >
+          Continuar comprando
+        </Button>
+        <Button 
+          variant="contained"
+          size="large"
+          disabled={items.length === 0}
+          sx={{ fontWeight: 600 }}
+        >
+          Proceder al pago
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
-}
-
+};
 
 export default Cart;

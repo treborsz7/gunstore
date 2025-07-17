@@ -1,90 +1,198 @@
 import React, { useState, useEffect } from 'react';
-import Cart from '../Cart/Cart'
-import './SearchBar.styles.css';
-import * as CartService from '../../Services/CartService'
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  Button,
+  IconButton,
+  Badge,
+  Box,
+  Container,
+  TextField,
+  InputAdornment,
+  Menu,
+  MenuItem,
+  useScrollTrigger,
+  Slide
+} from '@mui/material';
+import {
+  ShoppingCart as ShoppingCartIcon,
+  Search as SearchIcon,
+  Menu as MenuIcon
+} from '@mui/icons-material';
+import Cart from '../Cart/Cart';
+import * as CartService from '../../Services/CartService';
+
+// Hide AppBar on scroll for better mobile experience
+function HideOnScroll(props) {
+  const { children } = props;
+  const trigger = useScrollTrigger();
+
+  return (
+    <Slide appear={false} direction="down" in={!trigger}>
+      {children}
+    </Slide>
+  );
+}
 
 const Header = (props) => {
   const [show, setShow] = useState(false);
   const [CartItems, setCartItems] = useState(0);
-
-  const handleShow = () => setShow(true);
-  let itemsCount = 0;
+  const [anchorEl, setAnchorEl] = useState(null);
   const [TextToSearch, setTextToSearch] = useState("");
 
+  const handleShow = () => setShow(true);
+  const handleClose = () => setShow(false);
+  const handleMenuOpen = (event) => setAnchorEl(event.currentTarget);
+  const handleMenuClose = () => setAnchorEl(null);
+
   const handleSearchChange = (event) => {
-    setTextToSearch(event.target.value)
+    setTextToSearch(event.target.value);
   }
 
   const handleCounChange = (count) => {
-    console.log(count)
+    console.log(count);
     setCartItems(count);
   }
 
   const filterItems = (event) => {
-    event.preventDefault()
+    event.preventDefault();
     CartService.GetItemsByFilter({ text: TextToSearch });
   }
 
-  const handleClose = () => setShow(false);
-
   useEffect(() => {
-    setCartItems(itemsCount);
+    setCartItems(props.itemsCount);
   }, [props.itemsCount]);
 
-
-  console.log(props.Sections)
-
-
-  const sections = props.Sections.map(element => {
-    return (<li className="nav-item" key={element.id}>
-      <a className="nav-link active" aria-current="page" href={"#" + element.description}>{element.description}</a></li>)
-  })
+  const scrollToSection = (sectionId) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+    handleMenuClose();
+  };
 
   return (
-
     <>
+      <HideOnScroll>
+        <AppBar position="fixed" color="primary">
+          <Container maxWidth="lg">
+            <Toolbar sx={{ justifyContent: 'space-between', py: 1 }}>
+              <Typography 
+                variant="h6" 
+                component="div" 
+                sx={{ 
+                  fontWeight: 700,
+                  fontSize: { xs: '1.1rem', md: '1.25rem' }
+                }}
+              >
+                Armería Pro
+              </Typography>
 
+              {/* Desktop Navigation */}
+              <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 2 }}>
+                {props.Sections?.map(section => (
+                  <Button
+                    key={section.id}
+                    color="inherit"
+                    onClick={() => scrollToSection(section.description)}
+                    sx={{ fontWeight: 500 }}
+                  >
+                    {section.description}
+                  </Button>
+                ))}
+              </Box>
 
-      <nav className="navbar navbar-expand-lg navbar-light bg-light">
-        <div className="container px-4 px-lg-5">
-          <a className="navbar-brand" href="#!">Shop name</a>
-          <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span className="navbar-toggler-icon"></span></button>
-          <div className="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul className="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
-              {sections}
+              {/* Mobile Navigation */}
+              <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
+                <IconButton
+                  color="inherit"
+                  onClick={handleMenuOpen}
+                  edge="start"
+                >
+                  <MenuIcon />
+                </IconButton>
+                <Menu
+                  anchorEl={anchorEl}
+                  open={Boolean(anchorEl)}
+                  onClose={handleMenuClose}
+                  anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'left',
+                  }}
+                  transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'left',
+                  }}
+                >
+                  {props.Sections?.map(section => (
+                    <MenuItem
+                      key={section.id}
+                      onClick={() => scrollToSection(section.description)}
+                    >
+                      {section.description}
+                    </MenuItem>
+                  ))}
+                </Menu>
+              </Box>
 
-            </ul>
-            {/* <button className="btn btn-outline-dark" type="button" Style="border: none;">
-              <i className="bi-cart-fill me-1" ></i>
-              <span className="badge bg-dark text-white ms-1 rounded-pill" Style="top: -11px; right: 8px;">{props.carItem}</span>
-            </button> */}
-            <button className="btn btn-outline-dark" onClick={handleShow} type="button">
-              <i className="bi-cart-fill me-1"></i>
-              Carrito
-              <span className="badge bg-dark text-white ms-1 rounded-pill">{CartItems}</span>
-            </button>
+              {/* Cart Button */}
+              <IconButton
+                color="inherit"
+                onClick={handleShow}
+                sx={{ ml: 2 }}
+              >
+                <Badge badgeContent={CartItems} color="secondary">
+                  <ShoppingCartIcon />
+                </Badge>
+              </IconButton>
+            </Toolbar>
+          </Container>
+        </AppBar>
+      </HideOnScroll>
 
-          </div>
-        </div>
+      {/* Add spacing for fixed AppBar */}
+      <Toolbar />
 
-      </nav>
-      <div className="d-flex justify-content-end h-100 container px-4 px-lg-5 pb-5">
-        <font onSubmit={filterItems}>
-          <div className="searchbar">
+      {/* Search Bar */}
+      <Container maxWidth="lg" sx={{ py: 2 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+          <TextField
+            variant="outlined"
+            placeholder="Buscar productos..."
+            value={TextToSearch}
+            onChange={handleSearchChange}
+            size="small"
+            sx={{ 
+              minWidth: { xs: 200, md: 300 },
+              '& .MuiOutlinedInput-root': {
+                borderRadius: 2,
+              }
+            }}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon color="action" />
+                </InputAdornment>
+              ),
+            }}
+            onKeyPress={(e) => {
+              if (e.key === 'Enter') {
+                filterItems(e);
+              }
+            }}
+          />
+        </Box>
+      </Container>
 
-            <input className="search_input" value={TextToSearch} type="text" name="" placeholder="Buscar.." onChange={handleSearchChange} />
-
-            <div className="search_icon">
-              <i className="bi bi-search me-1"></i>
-            </div>
-
-          </div>
-        </font>
-      </div>
-      <Cart showItem={show} handleClose={handleClose} itemsCount={itemsCount} handleCounChange={handleCounChange}></Cart>
-
+      <Cart 
+        showItem={show} 
+        handleClose={handleClose} 
+        itemsCount={props.itemsCount} 
+        handleCounChange={handleCounChange}
+      />
     </>
-  )
+  );
 };
 
 export default Header;
