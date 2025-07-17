@@ -21,7 +21,7 @@ import {
   Delete as DeleteIcon,
   ShoppingCart as ShoppingCartIcon
 } from '@mui/icons-material';
-import * as CartService from '../../Services/CartService';
+import * as CartService from '../../Services/MockCartService';;
 
 const Cart = (props) => {
   const [show, setShow] = useState(false);

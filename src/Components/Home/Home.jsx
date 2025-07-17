@@ -25,8 +25,8 @@ import {
 } from '@mui/icons-material';
 import Header from '../Header/';
 import ItemPopup from '../ItemPopup';
-import * as DaoService from "./../../Services/DaoService"
-import * as CartService from "./../../Services/CartService"
+import * as DaoService from "./../../Services/MockDaoService"
+import * as CartService from "./../../Services/MockCartService"
 
 const Home = () => {
 
@@ -187,22 +187,7 @@ const Home = () => {
               container 
               spacing={3}
               id={element.id + "section"}
-              sx={{
-                overflowX: 'auto',
-                flexWrap: 'nowrap',
-                pb: 2,
-                '&::-webkit-scrollbar': {
-                  height: 8,
-                },
-                '&::-webkit-scrollbar-track': {
-                  backgroundColor: 'grey.100',
-                  borderRadius: 4,
-                },
-                '&::-webkit-scrollbar-thumb': {
-                  backgroundColor: 'grey.400',
-                  borderRadius: 4,
-                },
-              }}
+              sx={{ pb: 2 }}
             >
               {products}
             </Grid>

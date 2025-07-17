@@ -21,7 +21,7 @@ import {
   Menu as MenuIcon
 } from '@mui/icons-material';
 import Cart from '../Cart/Cart';
-import * as CartService from '../../Services/CartService';
+import * as CartService from '../../Services/MockCartService';;
 
 // Hide AppBar on scroll for better mobile experience
 function HideOnScroll(props) {
